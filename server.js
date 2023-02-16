@@ -5,6 +5,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 mongoose.set('strictQuery', false);
 const workoutRoutes = require("./routes/workouts");
+const userRoutes = require("./routes/user");
 
 // express app invocation
 const app = express();
@@ -26,10 +27,12 @@ app.use((req, res, next) => {
 //     res.json({mssg: "Welcome to the app"})
 // })
 
+// ROUTES
 // adding routes from routes/workouts to middleware:
 // when user fires /api/workouts it will use the routes
 // in 'workoutRoutes'
 app.use("/api/workouts", workoutRoutes);
+app.use("/api/user", userRoutes);
 
 // connect to db
 mongoose
