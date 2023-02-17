@@ -22,19 +22,18 @@ const userSchema = new Schema({
 //static 'signup' method
 // this does extra work for the model, and is done
 // asynchronously
-userSchema.statics.signup = async function(email, password) {
-
+userSchema.statics.signup = async function (email, password) {
     // validation
     if (!email || !password) {
-        throw Error('All fields must be filled');
+        throw Error("All fields must be filled");
     }
 
     if (!validator.isEmail(email)) {
-        throw Error('Email is not valid');
+        throw Error("Email is not valid");
     }
 
     if (!validator.isStrongPassword(password)) {
-        throw Error('Password not strong enough')
+        throw Error("Password not strong enough");
     }
 
     // were making sure that 'email' in the userSchema is unique,
@@ -49,6 +48,33 @@ userSchema.statics.signup = async function(email, password) {
     const hash = await bcrypt.hash(password, salt);
     const user = await this.create({ email, password: hash });
 
+    return user;
+};
+
+// static 'login' method
+// this also does extra work for the model, and is done
+// asynchronously
+userSchema.statics.login = async function (email, password) {
+    // validation
+    if (!email || !password) {
+        throw Error("All fields must be filled");
+    }
+    // checks to see if user email is in database
+    const user = await this.findOne({ email });
+
+    // throws error if not
+    if (!user) {
+        throw Error("Incorrect email");
+    }
+
+    // then checks user requst password with password on database
+    const match = await bcrypt.compare(password, user.password);
+
+    // if not matched
+    if (!match) {
+        throw Error("Incorrect password");
+    }
+    // otherwise all is good and return user
     return user;
 };
 
