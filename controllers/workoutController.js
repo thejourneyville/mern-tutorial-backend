@@ -3,8 +3,9 @@ const mongoose = require("mongoose");
 
 // get all workouts
 const getWorkouts = async (req, res) => {
+    const user_id = req.user._id
     // this will find all workout documents in the collection in decending order
-    const workouts = await Workout.find({}).sort({ createdAt: -1 });
+    const workouts = await Workout.find({ user_id }).sort({ createdAt: -1 });
     // returns success status and the list of workouts
     // in json to the client/browser
     res.status(200).json(workouts);
@@ -64,7 +65,8 @@ const createWorkout = async (req, res) => {
     // it will also return the document just created, along with
     // the ID of that document, which is binded to 'workout'
     try {
-        const workout = await Workout.create({ title, load, reps });
+        const user_id = req.user._id
+        const workout = await Workout.create({ title, load, reps, user_id });
         // if this works respond with 200 with workout
         // document in json format
         res.status(200).json(workout);
